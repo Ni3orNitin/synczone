@@ -1,89 +1,82 @@
-# SyncZone — Private Watch Party PWA
+# SyncZone — Working Real-Time Watch Party
 
-Watch YouTube & play games with your crew. Only invited friends can join.
-
-## Project structure
-
-```
-synczone/
-├── index.html       ← main app (PWA, responsive, all features)
-├── manifest.json    ← PWA manifest
-├── sw.js            ← service worker (offline caching)
-├── vercel.json      ← Vercel config
-├── gen-icons.js     ← icon generator (optional)
-└── icons/           ← create this folder with your icons
-```
+## What's fixed
+- ❌ No more fake Sara/Ravi auto-joining
+- ✅ Real Firebase backend — rooms actually work across devices
+- ✅ Someone on another phone can join with the room code
+- ✅ Video URL syncs for everyone when host loads it
+- ✅ Chat is real-time across all devices
+- ✅ Members list updates live as people join/leave
 
 ---
 
-## Deploy to Vercel (3 steps)
+## Setup (one-time, ~5 minutes)
 
-### Option A — Vercel CLI (fastest)
+### Step 1 — Create Firebase project (free)
+1. Go to https://console.firebase.google.com
+2. Click **Add project** → name it `synczone` → Continue
+3. Disable Google Analytics (not needed) → Create project
+
+### Step 2 — Get your config
+1. On the project page, click the **Web** icon `</>`
+2. Register app → name it `synczone-web`
+3. Copy the `firebaseConfig` object that appears
+
+### Step 3 — Enable Realtime Database
+1. In the left sidebar: **Build → Realtime Database**
+2. Click **Create Database**
+3. Choose a location (any)
+4. Select **Start in test mode** → Enable
+
+### Step 4 — Set database rules (open for now)
+In Realtime Database → Rules, paste this and publish:
+```json
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+```
+
+### Step 5 — Fill in config.js
+Open `config.js` and replace all the `REPLACE_WITH_YOUR_*` values with your actual Firebase config.
+
+---
+
+## Deploy to Vercel
 
 ```bash
-# 1. Install Vercel CLI
+# Install Vercel CLI
 npm i -g vercel
 
-# 2. Go into the folder
+# From the synczone folder
 cd synczone
-
-# 3. Deploy
 vercel
 ```
 
-Follow the prompts. Your site will be live at `https://synczone-xxx.vercel.app`.
+Or drag-drop the folder at vercel.com.
 
 ---
 
-### Option B — Vercel Dashboard (no CLI)
-
-1. Go to **https://vercel.com** → Sign in with GitHub
-2. Click **Add New → Project**
-3. Drag and drop the `synczone/` folder onto the upload area  
-   *(or push it to a GitHub repo and import that)*
-4. Leave all settings as default → click **Deploy**
-5. Done ✓ — get your live URL
+## How to share with friends
+1. You open the site → enter your name → Create Room
+2. You get a code like `SYNC-4821`
+3. Share that code (or the invite link) only with friends you want
+4. They open the site → enter their name → Join Room → paste the code
+5. They appear in your waiting room instantly
+6. You hit "Start Party" → everyone enters together
 
 ---
 
-## Generate PWA icons
-
-Icons are needed for "Add to Home Screen" on mobile.
-
-```bash
-# Install canvas (only needed once)
-npm install canvas
-
-# Run the generator
-node gen-icons.js
+## Project files
 ```
-
-This creates `icons/icon-72.png` through `icons/icon-512.png`.
-
-Alternatively, use https://www.pwabuilder.com/imageGenerator — upload any
-512×512 image and it will generate all sizes for you.
-
----
-
-## PWA features
-
-| Feature | Status |
-|---|---|
-| Installable (Add to Home Screen) | ✓ |
-| Offline shell caching | ✓ |
-| Standalone fullscreen mode | ✓ |
-| Mobile responsive layout | ✓ |
-| iOS safe area support | ✓ |
-| Collapsible chat (desktop) | ✓ |
-| Chat drawer (mobile) | ✓ |
-| Bottom nav (mobile) | ✓ |
-
----
-
-## Features
-
-- **Invite-only rooms** — 4-step flow: name → create/join → invite friends → waiting room
-- **Video call** always visible (side panel desktop / strip mobile)
-- **Watch Party** — paste any YouTube URL, everyone syncs
-- **Party Chat** — collapsible on desktop, slide-up drawer on mobile
-- **Games** — Tic-Tac-Toe, Hangman, Chess (full legal moves)
+synczone/
+├── index.html     ← HTML + CSS
+├── app.js         ← all JavaScript logic
+├── config.js      ← Firebase config (YOU EDIT THIS)
+├── sw.js          ← service worker (PWA offline)
+├── manifest.json  ← PWA manifest
+├── vercel.json    ← Vercel headers + rewrites
+└── icons/         ← add PWA icons here
+```
