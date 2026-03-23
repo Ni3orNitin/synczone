@@ -885,6 +885,7 @@ function listenToAllGames() {
     if (skipTTT || !snap.exists()) return;
     const s = snap.val();
     pendingTTT = s;
+    const wm = $('game-wait-msg'); if (wm) wm.remove();
     if ($('gp-ttt')?.classList.contains('on')) applyTTT(s);
   });
 
@@ -892,6 +893,7 @@ function listenToAllGames() {
     if (skipHM || !snap.exists()) return;
     const s = snap.val();
     pendingHM = s;
+    const wm = $('game-wait-msg'); if (wm) wm.remove();
     if ($('gp-hm')?.classList.contains('on')) applyHM(s);
   });
 
@@ -899,6 +901,7 @@ function listenToAllGames() {
     if (skipChess || !snap.exists()) return;
     const s = snap.val();
     pendingChess = s;
+    const wm = $('game-wait-msg'); if (wm) wm.remove();
     if ($('gp-chess')?.classList.contains('on')) applyChess(s);
   });
 }
@@ -911,28 +914,71 @@ function pushGameState(ref, data, flagSetter) {
 
 /* ═══════════════════════════════════════════════════════════
    GAMES
+   Rule: only the person who clicks "Start New Game" pushes
+   a fresh board. Everyone else applies whatever Firebase has.
+   When opening a panel we ALWAYS fetch from Firebase first.
 ═══════════════════════════════════════════════════════════ */
-function openGame(id) {
+async function openGame(id) {
   $('gz-lobby').style.display = 'none';
+
+  const panelMap = { ttt:'gp-ttt', hm:'gp-hm', chess:'gp-chess' };
+  const panel = $(panelMap[id]);
+  panel.classList.add('on');
+
+  /* show loading state */
+  const loadDiv = document.createElement('div');
+  loadDiv.id = 'game-loading';
+  loadDiv.style.cssText =
+    'text-align:center;padding:40px;font-family:var(--orb);' +
+    'font-size:11px;color:var(--muted);letter-spacing:2px;';
+  loadDiv.textContent = 'LOADING GAME…';
+  panel.appendChild(loadDiv);
+
+  /* fetch current Firebase state for this game */
+  const refMap = { ttt:_gameTTTRef, hm:_gameHMRef, chess:_gameChessRef };
+  const snap = await refMap[id].once('value');
+  const existing = snap.exists() ? snap.val() : null;
+
+  /* remove loading div */
+  const ld = $('game-loading'); if (ld) ld.remove();
+
   if (id === 'ttt') {
-    if (pendingTTT) { applyTTT(pendingTTT); }
-    else             { initTTT(); }
-    $('gp-ttt').classList.add('on');
+    if (existing) { applyTTT(existing); pendingTTT = existing; }
+    else if (G.isHost) { initTTT(); }
+    else { showWaitingForGame(panel, 'ttt'); }
   }
   if (id === 'hm') {
-    if (pendingHM) { applyHM(pendingHM); }
-    else            { initHM(); }
-    $('gp-hm').classList.add('on');
+    if (existing) { applyHM(existing); pendingHM = existing; }
+    else if (G.isHost) { initHM(); }
+    else { showWaitingForGame(panel, 'hm'); }
   }
   if (id === 'chess') {
-    if (pendingChess) { applyChess(pendingChess); }
-    else               { initChess(); }
-    $('gp-chess').classList.add('on');
+    if (existing) { applyChess(existing); pendingChess = existing; }
+    else if (G.isHost) { initChess(); }
+    else { showWaitingForGame(panel, 'chess'); }
   }
+}
+
+/* shown to non-host when no game exists yet */
+function showWaitingForGame(panel, id) {
+  const w = document.createElement('div');
+  w.id = 'game-wait-msg';
+  w.style.cssText =
+    'text-align:center;padding:40px;font-family:var(--orb);' +
+    'font-size:11px;color:var(--muted);letter-spacing:2px;';
+  w.innerHTML =
+    'WAITING FOR HOST TO START THE GAME…' +
+    '<br/><br/>' +
+    '<span style="font-size:9px;color:var(--muted2)">Host must click NEW GAME</span>';
+  panel.appendChild(w);
 }
 
 function closeGame() {
   document.querySelectorAll('.gp').forEach(p => p.classList.remove('on'));
+  /* remove any leftover loading / waiting divs */
+  ['game-loading','game-wait-msg'].forEach(id => {
+    const el = $(id); if (el) el.remove();
+  });
   $('gz-lobby').style.display = 'block';
 }
 
@@ -943,10 +989,14 @@ let tB, tX, tR;
 
 function initTTT() {
   tB = Array(9).fill(null); tX = true; tR = null;
+  G.tttScores = { X:0, O:0, D:0 };
+  const wm = $('game-wait-msg'); if (wm) wm.remove();
   renderTTT();
   pushGameState(_gameTTTRef,
-    { board:tB, xNext:tX, result:null, scores:G.tttScores },
+    { board:tB, xNext:tX, result:null, scores:G.tttScores,
+      by: G.name, at: Date.now() },
     v => (skipTTT = v));
+  addChatMsg('System', G.name + ' started a new Tic-Tac-Toe game!', 'var(--teal)');
 }
 
 function tttCheck(b) {
@@ -1016,7 +1066,7 @@ function renderTTT() {
   const ag = $('ttt-ag');
   if (ag) ag.innerHTML = tR
     ? `<button class="btn btn-teal" style="font-size:10px"
-         onclick="initTTT()">↺ PLAY AGAIN</button>` : '';
+         onclick="initTTT()">↺ NEW GAME (syncs everyone)</button>` : '';
 }
 
 /* ─── HANGMAN ─── */
@@ -1033,10 +1083,12 @@ let hW, hG, hE;
 function initHM() {
   hW = WORDS[Math.floor(Math.random() * WORDS.length)];
   hG = new Set(); hE = 0;
+  const wm = $('game-wait-msg'); if (wm) wm.remove();
   renderHM();
   pushGameState(_gameHMRef,
-    { word:hW, guessed:[], wrong:0 },
+    { word:hW, guessed:[], wrong:0, by: G.name, at: Date.now() },
     v => (skipHM = v));
+  addChatMsg('System', G.name + ' started a new Hangman game!', 'var(--pink)');
 }
 
 function hmKey(l) {
@@ -1126,7 +1178,7 @@ function renderHM() {
   const ag = $('hm-ag');
   if (ag) ag.innerHTML = (won || lost)
     ? `<button class="btn btn-primary" style="font-size:10px"
-         onclick="initHM()">↺ NEW WORD</button>` : '';
+         onclick="initHM()">↺ NEW WORD (syncs everyone)</button>` : '';
 }
 
 /* ─── CHESS ─── */
@@ -1146,9 +1198,11 @@ let cB, cSel, cLegal, cTurn, cCap, cMoveCount, cLastMove;
 function initChess() {
   cB = [...CH_INIT]; cSel = null; cLegal = []; cTurn = 'w';
   cCap = {w:[], b:[]}; cMoveCount = 0; cLastMove = null;
+  const wm = $('game-wait-msg'); if (wm) wm.remove();
   buildChessLabels();
   renderChess();
   pushGameState(_gameChessRef, chessSnapshot(), v => (skipChess = v));
+  addChatMsg('System', G.name + ' started a new Chess game!', 'var(--amber)');
 }
 
 function chessSnapshot() {
