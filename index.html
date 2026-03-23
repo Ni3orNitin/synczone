@@ -121,10 +121,12 @@ input,button{font-family:var(--mono)}button{cursor:pointer}
 .vc-hdr{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .vc-title{font-family:var(--orb);font-size:8px;color:var(--teal);letter-spacing:2px}
 .vc-tiles{flex:1;padding:7px;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
-.vt{background:var(--bg2);border:1px solid var(--border);position:relative;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color .3s;flex-shrink:0}
+.vt{background:var(--bg2);border:1px solid var(--border);position:relative;aspect-ratio:16/10;overflow:hidden;transition:border-color .3s,box-shadow .3s;flex-shrink:0}
 .vt.you{border-color:rgba(139,92,246,.45)}.vt.spk{border-color:var(--teal);animation:speakPulse 1.3s ease-in-out infinite}
+.vt-bg{position:absolute;inset:0;z-index:0;display:flex;align-items:center;justify-content:center}
+.vt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .vt-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--orb)}
-.vt-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(6,6,15,.84);padding:3px 6px;display:flex;align-items:center;justify-content:space-between}
+.vt-bar{position:absolute;bottom:0;left:0;right:0;z-index:3;background:rgba(6,6,15,.84);padding:3px 6px;display:flex;align-items:center;justify-content:space-between}
 .vt-name{font-size:8px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .vt-icons{display:flex;gap:3px;flex-shrink:0}
 .vi{width:10px;height:10px;flex-shrink:0}
@@ -278,11 +280,11 @@ input,button{font-family:var(--mono)}button{cursor:pointer}
   <div class="cfg-title">FIREBASE SETUP NEEDED</div>
   <p class="cfg-sub">This app needs Firebase for real-time rooms.<br/>It takes about 5 minutes to set up for free.</p>
   <div class="cfg-steps">
-    <div class="cfg-step"><span class="cfg-num">01</span><span>Go to <a class="cfg-link" href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → Create a project (free)</span></div>
-    <div class="cfg-step"><span class="cfg-num">02</span><span>Click <strong>Add app → Web</strong> → copy the <code>firebaseConfig</code> object</span></div>
-    <div class="cfg-step"><span class="cfg-num">03</span><span>Go to <strong>Realtime Database → Create database → Start in test mode</strong></span></div>
-    <div class="cfg-step"><span class="cfg-num">04</span><span>Open <code>config.js</code> in your project and paste your config values</span></div>
-    <div class="cfg-step"><span class="cfg-num">05</span><span>Save and redeploy to Vercel → Done!</span></div>
+    <div class="cfg-step"><span class="cfg-num">01</span><span>Go to <a class="cfg-link" href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → Create project (free)</span></div>
+    <div class="cfg-step"><span class="cfg-num">02</span><span><strong>Add app → Web</strong> → copy the <code>firebaseConfig</code> object → paste into <code>config.js</code></span></div>
+    <div class="cfg-step"><span class="cfg-num">03</span><span><strong>Build → Realtime Database → Create database → Start in test mode</strong></span></div>
+    <div class="cfg-step"><span class="cfg-num">04</span><span>In Realtime Database → <strong>Rules</strong> tab → set both <code>.read</code> and <code>.write</code> to <code>true</code> → Publish</span></div>
+    <div class="cfg-step"><span class="cfg-num">05</span><span>Push to GitHub → Vercel auto-deploys → open site in two browsers and test!</span></div>
   </div>
   <a class="btn btn-teal" style="text-decoration:none;font-size:10px" href="https://console.firebase.google.com" target="_blank">OPEN FIREBASE CONSOLE →</a>
 </div>
