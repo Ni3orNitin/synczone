@@ -7,667 +7,607 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="SyncZone"/>
-<meta name="description" content="Private watch party — watch YouTube and play games with your crew"/>
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="icons/icon-192.png"/>
-<title>SyncZone — Private Watch Party</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<title>SyncZone</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-/* ══ RESET ══ */
+/* ── RESET ── */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#06060f;--bg1:#0b0b1a;--bg2:#101022;--bg3:#161630;
   --teal:#00e5c3;--pink:#ff2d78;--violet:#8b5cf6;--amber:#fbbf24;--blue:#38bdf8;
   --border:#1e1e3a;--border2:#2a2a4a;--text:#e2e4ff;--muted:#4a4a72;--muted2:#6a6a92;
   --orb:'Orbitron',monospace;--mono:'DM Mono',monospace;
-  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
 }
-html,body{height:100%;height:-webkit-fill-available;background:var(--bg);color:var(--text);font-family:var(--mono);overflow:hidden}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);overflow:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border2)}
 input,button{font-family:var(--mono)}button{cursor:pointer}
 
-/* ══ ANIMATIONS ══ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes glow{0%,100%{text-shadow:0 0 10px #00e5c380}50%{text-shadow:0 0 28px var(--teal)}}
-@keyframes pulseDot{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
-@keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,195,.2)}50%{box-shadow:0 0 0 4px rgba(0,229,195,.12)}}
-@keyframes ticker{0%,100%{opacity:.45}50%{opacity:1}}
-@keyframes blink{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes glow{0%,100%{text-shadow:0 0 10px #00e5c380}50%{text-shadow:0 0 24px var(--teal)}}
+@keyframes pulse{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,195,.2)}50%{box-shadow:0 0 0 4px rgba(0,229,195,.14)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
 @keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
 
-/* ══ SHARED ══ */
+/* ── SHARED ── */
 .logo{font-family:var(--orb);font-weight:900;letter-spacing:3px;user-select:none}
 .logo .t{color:var(--teal)}.logo .p{color:var(--pink)}
 .btn{font-family:var(--orb);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:11px 24px;border:none;cursor:pointer;transition:all .18s;text-transform:uppercase;touch-action:manipulation}
-.btn-primary{background:var(--pink);color:#fff}.btn-primary:hover{background:#e01f66}
+.btn-primary{background:var(--pink);color:#fff}.btn-primary:hover{background:#d91f66}
 .btn-teal{background:transparent;color:var(--teal);border:1px solid rgba(0,229,195,.4)}.btn-teal:hover{background:rgba(0,229,195,.1)}
 .btn-amber{background:transparent;color:var(--amber);border:1px solid rgba(251,191,36,.4)}.btn-amber:hover{background:rgba(251,191,36,.1)}
 .btn-ghost{background:transparent;color:var(--muted2);border:1px solid var(--border);font-size:9px;padding:8px 18px}.btn-ghost:hover{color:var(--text)}
 .btn:disabled{opacity:.4;cursor:default;pointer-events:none}
-.inp{background:var(--bg1);border:1px solid var(--border);color:var(--text);padding:12px 14px;font-family:var(--mono);font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
-.inp:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
-.inp::placeholder{color:var(--muted)}
-.inp.error{border-color:var(--pink)!important;animation:shake .3s ease}
-.sec-title{font-family:var(--orb);font-size:9px;color:var(--muted2);letter-spacing:2px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.inp{background:var(--bg1);border:1px solid var(--border);color:var(--text);padding:12px 14px;font-size:14px;outline:none;width:100%;transition:border-color .2s}
+.inp:focus{border-color:var(--violet)}.inp::placeholder{color:var(--muted)}
+.inp.err{border-color:var(--pink)!important;animation:shake .3s ease}
+.orb{font-family:var(--orb)}
 
-/* ══ CONFIG OVERLAY ══ */
-#config-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
-.cfg-logo{font-size:28px;animation:glow 3s ease-in-out infinite;margin-bottom:24px}
-.cfg-title{font-family:var(--orb);font-size:18px;font-weight:900;color:var(--pink);margin-bottom:12px;letter-spacing:2px}
-.cfg-sub{font-size:12px;color:var(--muted2);margin-bottom:28px;line-height:1.7}
-.cfg-steps{background:var(--bg2);border:1px solid var(--border);padding:20px 24px;text-align:left;max-width:480px;width:100%;margin-bottom:24px}
-.cfg-step{display:flex;gap:12px;margin-bottom:12px;font-size:12px;line-height:1.6}
+/* ═══ CONFIG OVERLAY ═══ */
+#cfg{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.cfg-box{background:var(--bg2);border:1px solid var(--border);padding:22px 24px;max-width:460px;width:100%;text-align:left;margin:20px 0}
+.cfg-step{display:flex;gap:12px;margin-bottom:14px;font-size:12px;line-height:1.6}
 .cfg-step:last-child{margin-bottom:0}
 .cfg-num{font-family:var(--orb);font-size:10px;color:var(--teal);font-weight:700;flex-shrink:0;margin-top:1px}
-.cfg-link{color:var(--teal);text-decoration:underline}
+.cfg-link{color:var(--teal)}
 
-/* ══ ONBOARDING ══ */
-#onboarding{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:999;padding-top:var(--safe-t)}
+/* ═══ ONBOARDING ═══ */
+#onboarding{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:998;padding-top:var(--safe-t)}
 #onboarding.gone{display:none}
 .ob-prog{height:2px;background:var(--border);flex-shrink:0}
-.ob-bar{height:100%;background:linear-gradient(90deg,var(--violet),var(--pink),var(--teal));transition:width .4s ease}
+.ob-bar{height:100%;background:linear-gradient(90deg,var(--violet),var(--pink),var(--teal));transition:width .4s}
 .ob-steps{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
 .ob-step{flex:1;padding:10px 0;text-align:center;font-family:var(--orb);font-size:8px;letter-spacing:1.5px;color:var(--muted);border-bottom:2px solid transparent;transition:all .3s}
-.ob-step.on{color:var(--pink);border-bottom-color:var(--pink)}
-.ob-step.done{color:var(--teal);border-bottom-color:var(--teal)}
+.ob-step.on{color:var(--pink);border-bottom-color:var(--pink)}.ob-step.done{color:var(--teal);border-bottom-color:var(--teal)}
 .ob-body{flex:1;overflow-y:auto;display:flex}
-.ob-scr{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;animation:fadeUp .3s ease forwards}
-.ob-scr.on{display:flex}
-.ob-scr.top{justify-content:flex-start;padding-top:24px}
+.ob-scr{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;animation:fadeUp .3s ease}
+.ob-scr.on{display:flex}.ob-scr.top{justify-content:flex-start;padding-top:24px}
 .name-wrap{position:relative;margin-bottom:18px}
 .name-wrap .inp{padding-right:52px;font-size:16px}
-.name-av{position:absolute;right:11px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(139,92,246,.2);color:#c4b5fd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--orb);border:1px solid rgba(139,92,246,.3)}
+.name-av{position:absolute;right:11px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(139,92,246,.2);color:#c4b5fd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--orb)}
 .s2-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
 .s2-card{background:var(--bg2);border:1px solid var(--border);padding:22px 16px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
 .s2-card .bar{position:absolute;top:0;left:0;right:0;height:2px}
 .s2-card:hover{transform:translateY(-3px)}
-.join-box{background:var(--bg2);border:1px solid var(--border);padding:16px;animation:fadeUp .22s ease}
-.join-inp{background:var(--bg1);border:1px solid var(--border);color:var(--teal);padding:12px 14px;font-family:var(--orb);font-size:16px;letter-spacing:5px;outline:none;text-align:center;text-transform:uppercase;transition:border-color .2s;width:100%}
-.join-inp:focus{border-color:var(--teal)}
-.join-inp.error{border-color:var(--pink)!important;animation:shake .3s ease}
+.join-box{background:var(--bg2);border:1px solid var(--border);padding:16px;animation:fadeUp .22s}
+.join-inp{background:var(--bg1);border:1px solid var(--border);color:var(--teal);padding:12px 14px;font-family:var(--orb);font-size:16px;letter-spacing:5px;outline:none;text-align:center;text-transform:uppercase;width:100%}
+.join-inp:focus{border-color:var(--teal)}.join-inp.err{border-color:var(--pink)!important}
 .rc-box{background:var(--bg2);border:1px solid rgba(0,229,195,.28);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .rc-code{font-family:var(--orb);font-size:22px;font-weight:900;letter-spacing:5px;color:var(--teal)}
-.share-link-box{background:var(--bg1);border:1px solid var(--border);padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.share-link-txt{font-size:10px;color:var(--teal);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wait-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px;max-width:500px;width:100%}
 .w-tile{background:var(--bg2);border:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;position:relative}
 .w-tile.you{border-color:rgba(139,92,246,.4)}.w-tile.joined{border-color:rgba(0,229,195,.35)}
 .wt-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--orb)}
 .wt-badge{position:absolute;top:7px;right:7px;font-family:var(--orb);font-size:7px;font-weight:700;letter-spacing:1px;padding:2px 6px;border:1px solid}
 
-/* ══ MAIN APP ══ */
+/* ═══ MAIN APP ═══ */
 #app{display:none;flex-direction:column;height:100vh;height:-webkit-fill-available;overflow:hidden;padding-top:var(--safe-t)}
 #app.on{display:flex}
-.app-hdr{height:52px;background:rgba(6,6,15,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
-.hdr-room{display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);padding:4px 10px}
-.hdr-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pulseDot 1.4s ease-in-out infinite;flex-shrink:0}
-.hdr-tab{background:transparent;color:var(--muted);border:1px solid transparent;padding:5px 14px;font-family:var(--orb);font-size:9px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .18s}
-.hdr-tab:hover{color:var(--text);border-color:var(--border)}
+
+/* HEADER */
+.app-hdr{height:44px;background:rgba(6,6,15,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
+.hdr-room{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);padding:4px 10px}
+.hdr-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pulse 1.4s ease-in-out infinite;flex-shrink:0}
+.hdr-tab-group{display:none;gap:2px}
+.hdr-tab{background:transparent;color:var(--muted);border:1px solid transparent;padding:5px 12px;font-family:var(--orb);font-size:9px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .18s}
 .hdr-tab.on{color:var(--teal);background:rgba(0,229,195,.06);border-color:rgba(0,229,195,.25)}
-.mob-hdr{display:none;height:48px;background:rgba(6,6,15,.94);border-bottom:1px solid var(--border);align-items:center;padding:0 14px;justify-content:space-between;flex-shrink:0}
-.vcall-desk{width:200px;background:var(--bg1);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.vcall-mob{display:none;background:var(--bg1);border-bottom:1px solid var(--border);flex-shrink:0;padding:7px 10px}
-.vc-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
-.vc-strip::-webkit-scrollbar{height:2px}
-.vt-mob{width:60px;height:42px;background:var(--bg2);border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;border-radius:4px;transition:border-color .3s}
-.vt-mob.you{border-color:rgba(139,92,246,.45)}.vt-mob.spk{border-color:var(--teal);animation:speakPulse 1.3s ease-in-out infinite}
-.vt-mob-name{position:absolute;bottom:2px;left:2px;right:2px;background:rgba(6,6,15,.85);font-size:7px;color:var(--text);text-align:center;padding:1px;border-radius:2px}
-.vc-mob-ctrl{display:flex;justify-content:center;gap:8px;margin-top:7px}
-.vc-hdr{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.vc-title{font-family:var(--orb);font-size:8px;color:var(--teal);letter-spacing:2px}
-.vc-tiles{flex:1;padding:7px;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
-.vt{background:var(--bg2);border:1px solid var(--border);position:relative;aspect-ratio:16/10;overflow:hidden;transition:border-color .3s,box-shadow .3s;flex-shrink:0}
-.vt.you{border-color:rgba(139,92,246,.45)}.vt.spk{border-color:var(--teal);animation:speakPulse 1.3s ease-in-out infinite}
-.vt-bg{position:absolute;inset:0;z-index:0;display:flex;align-items:center;justify-content:center}
-.vt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
-.vt-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--orb)}
-.vt-bar{position:absolute;bottom:0;left:0;right:0;z-index:3;background:rgba(6,6,15,.84);padding:3px 6px;display:flex;align-items:center;justify-content:space-between}
-.vt-name{font-size:8px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.vt-icons{display:flex;gap:3px;flex-shrink:0}
-.vi{width:10px;height:10px;flex-shrink:0}
-.vc-ctrl{padding:8px;border-top:1px solid var(--border);display:flex;justify-content:center;gap:6px;flex-shrink:0}
-.vc-btn{width:31px;height:31px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;touch-action:manipulation}
-.vc-btn:hover{background:var(--bg3)}.vc-btn.on{background:rgba(0,229,195,.1);border-color:rgba(0,229,195,.35)}
-.vc-btn.end{background:rgba(255,45,120,.14);border-color:rgba(255,45,120,.4)}
-.app-body{flex:1;display:flex;overflow:hidden;position:relative}
-.app-main{flex:1;overflow:hidden;position:relative}
-.app-scr{display:none;height:100%;overflow-y:auto;animation:fadeUp .3s ease forwards}
+
+/* ── TOP 1/3 VIDEO ZONE ── */
+.vc-zone{height:calc(33vh - 22px);min-height:160px;max-height:220px;display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;background:#070712;flex-shrink:0}
+.vc-tile{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border-radius:5px;border:1.5px solid var(--border)}
+.vc-tile.you{border-color:rgba(139,92,246,.5)}
+.vc-tile.spk{border-color:var(--teal);animation:speakPulse 1.3s ease-in-out infinite}
+.vc-tile-bg{position:absolute;inset:0;z-index:0;display:flex;align-items:center;justify-content:center}
+.vc-tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.vc-av{font-family:var(--orb);font-size:clamp(20px,5vw,32px);font-weight:900;position:relative;z-index:1}
+.vc-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(6,6,15,.88);padding:4px 8px;display:flex;justify-content:space-between;align-items:center;z-index:3}
+.vc-name{font-size:9px;color:var(--text)}
+.vc-status{font-size:8px}
+
+/* CALL CONTROLS */
+.call-ctrl{height:46px;background:var(--bg1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:14px;flex-shrink:0}
+.cc-btn{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;touch-action:manipulation}
+.cc-btn.on{background:rgba(0,229,195,.1);border:1.5px solid rgba(0,229,195,.4)}
+.cc-btn.off{background:rgba(255,45,120,.1);border:1.5px solid rgba(255,45,120,.4)}
+.cc-btn.end{background:rgba(255,45,120,.18);border:1.5px solid rgba(255,45,120,.55)}
+.cc-btn.off svg rect,.cc-btn.off svg path,.cc-btn.off svg line{stroke:#ff2d78!important;fill:none!important}
+
+/* CONTENT ZONE */
+.app-body{flex:1;overflow:hidden;position:relative;min-height:0}
+.app-scr{display:none;height:100%;overflow-y:auto;overflow-x:hidden;animation:fadeUp .25s ease;-webkit-overflow-scrolling:touch}
 .app-scr.on{display:flex;flex-direction:column}
-.bot-nav{display:none;flex-shrink:0;background:var(--bg1);border-top:1px solid var(--border);padding-bottom:var(--safe-b)}
-.bot-nav-inner{display:flex}
-.bn-tab{flex:1;padding:11px 0;text-align:center;font-family:var(--orb);font-size:8px;letter-spacing:1.5px;color:var(--muted);border-top:2px solid transparent;cursor:pointer;transition:all .2s;touch-action:manipulation}
-.bn-tab.on{color:var(--teal);border-top-color:var(--teal)}
-.back-btn{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;padding:0 0 2px;transition:color .15s;flex-shrink:0;width:fit-content;letter-spacing:.5px}
+.app-scr::-webkit-scrollbar{width:2px}
+
+/* BOTTOM NAV */
+.bot-nav{flex-shrink:0;background:var(--bg1);border-top:1px solid var(--border);display:flex;padding-bottom:var(--safe-b)}
+.bn{flex:1;padding:11px 0;text-align:center;font-family:var(--orb);font-size:8px;letter-spacing:1.5px;color:var(--muted);border-top:2px solid transparent;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.bn.on{color:var(--teal);border-top-color:var(--teal)}
+
+/* BACK BUTTON */
+.back-btn{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;padding:12px 14px 6px;transition:color .15s;flex-shrink:0;width:fit-content}
 .back-btn:hover{color:var(--text)}
 
-/* LOBBY */
-#scr-lobby{align-items:center;justify-content:center;padding:28px 20px}
-.lobby-inner{width:100%;max-width:540px;text-align:center}
-.lobby-headline{font-family:var(--orb);font-size:22px;font-weight:900;line-height:1.15;margin-bottom:10px}
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
-.mode-card{background:var(--bg2);border:1px solid var(--border);padding:24px 18px;cursor:pointer;text-align:left;transition:all .22s;position:relative;overflow:hidden;touch-action:manipulation}
+/* ═══ LOBBY ═══ */
+#scr-lobby{align-items:center;justify-content:center;padding:20px 16px}
+.lobby-inner{width:100%;max-width:500px;text-align:center}
+.lobby-headline{font-family:var(--orb);font-size:clamp(18px,5vw,22px);font-weight:900;line-height:1.15;margin-bottom:10px}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+@media(max-width:400px){.mode-grid{grid-template-columns:1fr}}
+.mode-card{background:var(--bg2);border:1px solid var(--border);padding:20px 14px;cursor:pointer;text-align:left;transition:all .22s;position:relative;overflow:hidden;touch-action:manipulation}
 .mode-card .mc-bar{position:absolute;top:0;left:0;right:0;height:2px}
-.mode-card:hover{transform:translateY(-4px)}
-.mc-icon{font-size:28px;font-family:var(--orb);margin-bottom:12px}
-.mc-name{font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:6px}
+.mode-card:active{transform:scale(.97)}
+.mc-icon{font-size:26px;font-family:var(--orb);margin-bottom:10px}
+.mc-name{font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:5px}
 .mc-desc{font-size:10px;color:var(--muted2);line-height:1.6}
 .lobby-pips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
-.pip{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);padding:5px 11px}
+.pip{display:flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);padding:4px 10px}
 .pip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 
-/* WATCH */
-#scr-watch{overflow:hidden}
-.watch-layout{flex:1;display:flex;overflow:hidden}
-.w-left{flex:1;display:flex;flex-direction:column;padding:14px;gap:10px;min-width:0}
-.url-row{display:flex;gap:8px;flex-shrink:0}
-.url-inp{flex:1;background:var(--bg1);border:1px solid var(--border);color:var(--text);padding:10px 13px;font-family:var(--mono);font-size:13px;outline:none;transition:border-color .2s}
+/* ═══ WATCH ═══ */
+#scr-watch{padding:0}
+.watch-inner{display:flex;flex-direction:column;padding:0}
+.url-row{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.url-inp{flex:1;background:var(--bg1);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-size:13px;outline:none}
 .url-inp:focus{border-color:var(--pink)}.url-inp::placeholder{color:var(--muted)}
-.url-inp.error{border-color:var(--pink)!important;animation:shake .3s ease}
-.player-box{flex:1;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:0}
+.url-inp.err{border-color:var(--pink)!important;animation:shake .3s}
+.player-box{background:#000;height:200px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .player-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--pink),var(--violet),var(--blue));z-index:2}
 .player-box iframe{position:absolute;inset:0;width:100%;height:100%;border:none;z-index:1}
-.w-stats{display:flex;gap:7px;flex-shrink:0;flex-wrap:wrap}
-.wst{background:var(--bg2);border:1px solid var(--border);padding:8px 12px;flex:1;min-width:60px}
+.w-stats{display:flex;flex-shrink:0}
+.wst{flex:1;padding:8px 10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.wst:last-child{border-right:none}
 .wst-l{font-size:7px;color:var(--muted);letter-spacing:2px;font-family:var(--orb);margin-bottom:3px}
 .wst-v{font-size:11px;font-weight:500}
-/* chat */
-.chat-panel{width:220px;display:flex;flex-direction:column;border-left:1px solid var(--border);flex-shrink:0;transition:width .25s ease}
-.chat-panel.collapsed{width:0;overflow:hidden;border-left:none}
-.chat-hdr{padding:9px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
-.chat-hdr-title{font-family:var(--orb);font-size:8px;color:var(--pink);letter-spacing:2px}
-.chat-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:3px 7px;font-size:9px;cursor:pointer;font-family:var(--orb);letter-spacing:1px;transition:all .15s}
-.chat-toggle:hover{color:var(--text);border-color:var(--border2)}
-.chat-msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px}
+.chat-box{margin:10px 12px;background:var(--bg2);border:1px solid var(--border)}
+.chat-hdr{padding:7px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.chat-hdr-title{font-family:var(--orb);font-size:8px;color:var(--pink);letter-spacing:1.5px}
+.chat-msgs{padding:8px 10px;display:flex;flex-direction:column;gap:8px;max-height:130px;overflow-y:auto}
 .cm-who{font-size:9px;font-family:var(--orb);font-weight:700;margin-bottom:2px}
 .cm-time{font-size:8px;color:var(--muted);margin-left:5px}
-.cm-text{font-size:11px;color:var(--text);line-height:1.55}
-.chat-inp-row{padding:7px;border-top:1px solid var(--border);display:flex;gap:6px;flex-shrink:0}
-.chat-inp{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 9px;font-family:var(--mono);font-size:12px;outline:none;transition:border-color .2s}
+.cm-txt{font-size:11px;color:var(--text);line-height:1.5}
+.chat-inp-row{display:flex;gap:6px;padding:7px 8px;border-top:1px solid var(--border)}
+.chat-inp{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 9px;font-size:12px;outline:none}
 .chat-inp:focus{border-color:var(--pink)}
 .chat-send{background:var(--pink);color:#fff;border:none;width:30px;height:30px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0}
-.chat-mini-bar{display:none;align-items:center;justify-content:space-between;padding:6px 12px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;cursor:pointer}
-.chat-mini-bar.show{display:flex}
-.chat-mini-preview{font-size:10px;color:var(--muted2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.chat-drawer{display:none;position:absolute;bottom:0;left:0;right:0;z-index:50;background:var(--bg2);border-top:1px solid var(--border);flex-direction:column;animation:slideUp .25s ease}
-.chat-drawer.open{display:flex;height:55%}
-.drawer-drag{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:8px auto}
 
-/* GAMES */
-#scr-games{padding:22px 20px}
-.gz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.gc{background:var(--bg2);border:1px solid var(--border);padding:22px 16px;cursor:pointer;position:relative;overflow:hidden;transition:all .22s;touch-action:manipulation}
-.gc .gc-bar{position:absolute;top:0;left:0;right:0;height:2px}
-.gc:active{transform:translateY(-2px)}
-.gc-badge{position:absolute;top:9px;right:9px;font-family:var(--orb);font-size:7px;font-weight:700;letter-spacing:1px;padding:2px 7px;border:1px solid}
-.gc-icon{font-size:32px;font-family:var(--orb);margin-bottom:11px}
-.gc-name{font-family:var(--orb);font-size:10px;font-weight:700;letter-spacing:2px;margin-bottom:5px}
-.gc-desc{font-size:9px;color:var(--muted2);line-height:1.6}
-.gp{display:none;flex-direction:column;padding:20px;height:100%;overflow-y:auto}
+/* ═══ GAME LOBBY ═══ */
+#scr-games{padding:16px}
+.gz-title{font-family:var(--orb);font-size:18px;font-weight:900;margin-bottom:4px}
+.gz-sub{font-size:10px;color:var(--muted2);margin-bottom:18px}
+.gz-grid{display:flex;flex-direction:column;gap:10px}
+.gc{background:var(--bg2);border:1px solid var(--border);padding:16px;cursor:pointer;position:relative;overflow:hidden;transition:all .2s;display:flex;align-items:center;gap:14px;touch-action:manipulation}
+.gc .gc-bar{position:absolute;top:0;left:0;bottom:0;width:3px}
+.gc:active{background:var(--bg3)}
+.gc-icon{font-size:28px;font-family:var(--orb);flex-shrink:0}
+.gc-info{flex:1}
+.gc-name{font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.gc-desc{font-size:10px;color:var(--muted2);line-height:1.5}
+.gc-badge{font-family:var(--orb);font-size:8px;font-weight:700;letter-spacing:1px;padding:3px 9px;border:1px solid;flex-shrink:0}
+
+/* ═══ GAME PANEL ═══ */
+.gp{display:none;flex-direction:column;padding:0;min-height:0}
 .gp.on{display:flex}
+
+/* turn banner */
+.turn-banner{padding:10px 14px;border-bottom:2px solid;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.turn-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--orb);flex-shrink:0}
+.turn-name{font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:1px}
+.turn-label{font-family:var(--orb);font-size:7px;color:var(--muted);letter-spacing:2px;margin-bottom:3px}
+
 /* TTT */
-.ttt-scores{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
-.ttt-sb{background:var(--bg2);border:1px solid var(--border);padding:9px 18px;text-align:center}
-.ttt-sl{font-size:8px;color:var(--muted);letter-spacing:2px;font-family:var(--orb);margin-bottom:4px}
-.ttt-sv{font-size:24px;font-family:var(--orb);font-weight:900}
-.ttt-status{font-family:var(--orb);font-size:11px;letter-spacing:3px;text-align:center;margin-bottom:18px;height:16px}
-.ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;margin:0 auto 20px}
-.ttt-cell{aspect-ratio:1;background:var(--bg2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:42px;font-family:var(--orb);font-weight:900;cursor:pointer;transition:all .15s;touch-action:manipulation}
-.ttt-cell:active:not(.taken){background:var(--bg3)}.ttt-cell.wc{box-shadow:0 0 16px rgba(0,229,195,.2)}
-/* Hangman */
-.hm-body{display:flex;gap:24px;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap}
-.hm-right{flex:1;min-width:220px}
-.word-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
-.l-box{width:32px;height:42px;border-bottom:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--orb);font-size:17px;font-weight:700;transition:all .2s}
-.hm-pt{width:100%;height:3px;background:var(--border);margin:10px 0 5px}.hm-pf{height:100%;transition:all .3s}
-.kb{display:flex;flex-wrap:wrap;gap:5px;max-width:460px;margin-bottom:20px}
-.k{width:34px;height:34px;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:var(--orb);font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
-.k:active:not([disabled]){background:var(--bg3)}.k.hit{background:rgba(0,229,195,.1);border-color:rgba(0,229,195,.4);color:var(--teal)}
-.k.miss{background:rgba(255,45,120,.05);border-color:rgba(255,45,120,.25);color:rgba(255,45,120,.45);text-decoration:line-through}
-.k[disabled]{cursor:default}
-/* Chess */
-.ch-layout{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
-.ch-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.ch-wrap{position:relative;padding:0 0 22px 20px;display:inline-block}
-.ch-rl{position:absolute;left:0;top:0;height:480px;display:flex;flex-direction:column;justify-content:space-around}
-.ch-rl span,.ch-fl span{font-size:9px;color:var(--muted);width:16px;text-align:center}
-.ch-fl{position:absolute;bottom:0;left:20px;width:480px;display:flex;justify-content:space-around}
-.ch-board{display:grid;grid-template-columns:repeat(8,60px);border:2px solid var(--border2)}
-.sq{width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .1s;touch-action:manipulation}
+.ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px;max-width:290px;margin:0 auto}
+.ttt-cell{aspect-ratio:1;background:var(--bg2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:clamp(32px,10vw,46px);font-family:var(--orb);font-weight:900;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.ttt-cell:active:not(.taken){background:var(--bg3)}
+.ttt-cell.wc{box-shadow:0 0 16px rgba(0,229,195,.2)}
+.ttt-cell.blocked{cursor:not-allowed;opacity:.7}
+.player-labels{display:flex;gap:8px;padding:0 14px 14px}
+.pl-box{flex:1;background:var(--bg2);border:1px solid var(--border);padding:8px;text-align:center}
+.pl-lbl{font-family:var(--orb);font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px}
+.pl-name{font-family:var(--orb);font-size:10px;font-weight:700}
+.score-row{display:flex;gap:8px;justify-content:center;padding:0 14px 10px}
+.score-box{background:var(--bg2);border:1px solid var(--border);padding:8px 16px;text-align:center;min-width:70px}
+.score-lbl{font-size:7px;color:var(--muted);letter-spacing:2px;font-family:var(--orb);margin-bottom:4px}
+.score-val{font-size:22px;font-family:var(--orb);font-weight:900}
+
+/* HANGMAN */
+.hm-content{padding:14px;display:flex;flex-direction:column;gap:14px}
+.word-row{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.l-box{width:30px;height:40px;border-bottom:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--orb);font-size:16px;font-weight:700;transition:all .2s}
+.hm-prog{height:3px;background:var(--border);margin-top:10px}
+.hm-prog-fill{height:100%;transition:all .3s}
+.kb{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.k{width:clamp(30px,9vw,36px);height:clamp(30px,9vw,36px);background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:var(--orb);font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+.k:active:not([disabled]){background:var(--bg3)}
+.k.hit{background:rgba(0,229,195,.1);border-color:rgba(0,229,195,.4);color:var(--teal)}
+.k.miss{background:rgba(255,45,120,.05);border-color:rgba(255,45,120,.2);color:rgba(255,45,120,.4);text-decoration:line-through}
+.k[disabled]{cursor:default}.k.blocked{cursor:not-allowed}
+
+/* CHESS */
+.chess-content{padding:10px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.chess-board-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+.chess-board{display:grid;grid-template-columns:repeat(8,var(--sq,38px));border:2px solid var(--border2);display:inline-grid}
+.sq{width:var(--sq,38px);height:var(--sq,38px);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .1s;touch-action:manipulation}
 .sq.ls{background:#1b2736}.sq.ds{background:#14202c}
-.sq.sel{background:rgba(0,229,195,.22)!important;outline:2px solid var(--teal);outline-offset:-2px}
-.sq.leg::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(0,229,195,.42);pointer-events:none}
+.sq.sel{background:rgba(0,229,195,.25)!important;outline:2px solid var(--teal);outline-offset:-2px}
+.sq.leg::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:rgba(0,229,195,.45);pointer-events:none}
 .sq.cap::before{content:'';position:absolute;inset:0;border:3px solid rgba(255,45,120,.7);pointer-events:none;z-index:2}
 .sq.lm.ls{background:#293d1f!important}.sq.lm.ds{background:#1f3018!important}
-.cp{font-size:32px;user-select:none;line-height:1;position:relative;z-index:1}
-.cp.w{color:#f2f2ff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.8))}
-.cp.b{color:#111827;filter:drop-shadow(0 1px 4px rgba(0,0,0,.9)) brightness(.55)}
-.ch-side{flex:1;min-width:160px}
-.ch-box{background:var(--bg2);border:1px solid var(--border);padding:11px 13px;margin-bottom:9px}
-.ch-lbl{font-size:8px;color:var(--muted);letter-spacing:2px;font-family:var(--orb);margin-bottom:7px}
+.sq.blocked{cursor:not-allowed}
+.cp{font-size:clamp(20px,5vw,26px);user-select:none;line-height:1;position:relative;z-index:1}
+.cp.w{color:#f2f2ff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.9))}
+.cp.b{color:#111827;filter:drop-shadow(0 1px 4px rgba(0,0,0,.9)) brightness(.5)}
+.chess-info{display:flex;gap:7px;width:100%;max-width:360px}
+.ci-box{flex:1;background:var(--bg2);border:1px solid var(--border);padding:8px 10px}
+.ci-lbl{font-size:7px;color:var(--muted);letter-spacing:2px;font-family:var(--orb);margin-bottom:4px}
+.ci-val{font-size:11px}
 
-/* ══ RESPONSIVE ══ */
-@media(max-width:767px){
-  .app-hdr{display:none}.mob-hdr{display:flex}.vcall-desk{display:none}.vcall-mob{display:block}.bot-nav{display:block}
-  .mode-grid{grid-template-columns:1fr}
-  .lobby-headline{font-size:20px}
-  .gz-grid{grid-template-columns:1fr}
-  .gc{display:flex;align-items:center;gap:14px;padding:14px}
-  .gc-icon{font-size:28px;margin-bottom:0;flex-shrink:0}.gc-badge{position:static;margin-left:auto}
-  .watch-layout{flex-direction:column}
-  .w-left{padding:10px;gap:8px}
-  .chat-panel{display:none}
-  .w-stats{gap:5px}.wst{padding:6px 8px}.wst-l{font-size:7px}.wst-v{font-size:10px}
-  .ttt-board{max-width:260px}.ttt-cell{font-size:36px}
-  .hm-body{flex-direction:column}.kb{max-width:100%}.k{width:30px;height:30px;font-size:9px}
-  #scr-lobby{padding:16px}#scr-games{padding:14px}.gp{padding:14px}
-}
+/* ── DESKTOP ── */
 @media(min-width:768px){
-  .mob-hdr{display:none}.vcall-mob{display:none}.bot-nav{display:none}
-  #scr-watch .chat-drawer{display:none!important}
+  .vc-zone{height:220px;max-height:none}
+  .hdr-tab-group{display:flex}
+  .bot-nav{display:none}
+  .app-hdr{height:52px}
+  .chess-board{--sq:54px}
+  .ttt-board{max-width:340px}
+  .ttt-cell{font-size:52px}
+  .player-box{height:260px}
+  .chat-msgs{max-height:180px}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ FIREBASE NOT CONFIGURED OVERLAY ══ -->
-<div id="config-overlay">
-  <div class="cfg-logo logo"><span class="t">SYNC</span><span class="p">ZONE</span></div>
-  <div class="cfg-title">FIREBASE SETUP NEEDED</div>
-  <p class="cfg-sub">This app needs Firebase for real-time rooms.<br/>It takes about 5 minutes to set up for free.</p>
-  <div class="cfg-steps">
-    <div class="cfg-step"><span class="cfg-num">01</span><span>Go to <a class="cfg-link" href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → Create project (free)</span></div>
-    <div class="cfg-step"><span class="cfg-num">02</span><span><strong>Add app → Web</strong> → copy the <code>firebaseConfig</code> object → paste into <code>config.js</code></span></div>
-    <div class="cfg-step"><span class="cfg-num">03</span><span><strong>Build → Realtime Database → Create database → Start in test mode</strong></span></div>
-    <div class="cfg-step"><span class="cfg-num">04</span><span>In Realtime Database → <strong>Rules</strong> tab → set both <code>.read</code> and <code>.write</code> to <code>true</code> → Publish</span></div>
-    <div class="cfg-step"><span class="cfg-num">05</span><span>Push to GitHub → Vercel auto-deploys → open site in two browsers and test!</span></div>
+<!-- CONFIG OVERLAY -->
+<div id="cfg">
+  <div class="logo" style="font-size:24px;animation:glow 3s ease-in-out infinite;margin-bottom:20px"><span class="t">SYNC</span><span class="p">ZONE</span></div>
+  <h2 style="font-family:var(--orb);font-size:16px;color:var(--pink);letter-spacing:2px;margin-bottom:10px">FIREBASE SETUP NEEDED</h2>
+  <p style="font-size:12px;color:var(--muted2);margin-bottom:20px">Paste your Firebase config in <code>config.js</code></p>
+  <div class="cfg-box">
+    <div class="cfg-step"><span class="cfg-num">01</span><span>Go to <a class="cfg-link" href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → Create project</span></div>
+    <div class="cfg-step"><span class="cfg-num">02</span><span>Add Web app → copy <code>firebaseConfig</code> → paste into <code>config.js</code></span></div>
+    <div class="cfg-step"><span class="cfg-num">03</span><span>Build → Realtime Database → Create → Test mode → set rules <code>.read/.write = true</code></span></div>
+    <div class="cfg-step"><span class="cfg-num">04</span><span>Push to GitHub → Vercel deploys → done!</span></div>
   </div>
-  <a class="btn btn-teal" style="text-decoration:none;font-size:10px" href="https://console.firebase.google.com" target="_blank">OPEN FIREBASE CONSOLE →</a>
+  <a class="btn btn-teal" style="text-decoration:none" href="https://console.firebase.google.com" target="_blank">OPEN FIREBASE →</a>
 </div>
 
-<!-- ══════════ ONBOARDING ══════════ -->
+<!-- ═══ ONBOARDING ═══ -->
 <div id="onboarding">
   <div class="ob-prog"><div class="ob-bar" id="ob-bar" style="width:25%"></div></div>
   <div class="ob-steps">
     <div class="ob-step on" id="os0">IDENTITY</div>
     <div class="ob-step" id="os1">ROOM</div>
     <div class="ob-step" id="os2">SHARE</div>
-    <div class="ob-step" id="os3">PARTY</div>
+    <div class="ob-step" id="os3">WAITING</div>
   </div>
   <div class="ob-body">
 
-    <!-- S1: Name -->
+    <!-- S1 name -->
     <div id="s1" class="ob-scr on">
-      <div style="text-align:center;margin-bottom:32px">
+      <div style="text-align:center;margin-bottom:28px">
         <div class="logo" style="font-size:26px;animation:glow 3s ease-in-out infinite;margin-bottom:14px"><span class="t">SYNC</span><span class="p">ZONE</span></div>
         <p style="font-size:10px;color:var(--muted);letter-spacing:4px;margin-bottom:14px">PRIVATE WATCH PARTY</p>
-        <h1 style="font-family:var(--orb);font-size:clamp(20px,5vw,26px);font-weight:900;line-height:1.1;margin-bottom:10px">
+        <h1 style="font-family:var(--orb);font-size:clamp(18px,5vw,24px);font-weight:900;line-height:1.1;margin-bottom:10px">
           <span style="color:var(--teal)">WATCH TOGETHER.</span><br/><span style="color:var(--pink)">ONLY YOUR CREW.</span>
         </h1>
-        <p style="font-size:12px;color:var(--muted2)">Video call stays on — watch movies or play games together</p>
+        <p style="font-size:12px;color:var(--muted2)">Video call always on — watch or play games together</p>
       </div>
       <div style="width:100%;max-width:380px">
         <label style="font-size:9px;color:var(--muted);letter-spacing:2px;font-family:var(--orb);margin-bottom:8px;display:block">YOUR DISPLAY NAME</label>
         <div class="name-wrap">
-          <input class="inp" id="n-inp" placeholder="e.g. Alex" maxlength="16" oninput="onName()" onkeydown="if(event.key==='Enter')go2()"/>
+          <input class="inp" id="n-inp" placeholder="e.g. Nitin" maxlength="16" oninput="onName()" onkeydown="if(event.key==='Enter')go2()"/>
           <div class="name-av" id="n-av">?</div>
         </div>
         <button class="btn btn-primary" style="width:100%" onclick="go2()">CONTINUE →</button>
-        <p style="font-size:10px;color:var(--muted);text-align:center;margin-top:14px">share the room code only with people you want inside</p>
       </div>
     </div>
 
-    <!-- S2: Create / Join -->
+    <!-- S2 create/join -->
     <div id="s2" class="ob-scr">
       <div style="width:100%;max-width:460px">
         <p style="font-family:var(--orb);font-size:16px;font-weight:900;letter-spacing:2px;margin-bottom:5px">START OR JOIN?</p>
-        <p style="font-size:11px;color:var(--muted2);margin-bottom:26px">Create a private room or enter a code from a friend</p>
+        <p style="font-size:11px;color:var(--muted2);margin-bottom:24px">Host a private room or enter a friend's code</p>
         <div class="s2-cards">
-          <div class="s2-card create" onclick="doCreate()">
+          <div class="s2-card" onclick="doCreate()">
             <div class="bar" style="background:var(--pink)"></div>
-            <div style="font-size:26px;color:var(--pink);font-family:var(--orb);margin-bottom:10px">⊕</div>
-            <div style="font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--pink);margin-bottom:5px">CREATE ROOM</div>
-            <div style="font-size:10px;color:var(--muted2);line-height:1.6">Start a private party. You get the room code to share.</div>
-            <button class="btn btn-primary" id="create-btn" style="width:100%;margin-top:14px;font-size:10px;pointer-events:auto">CREATE →</button>
+            <div style="font-size:24px;color:var(--pink);font-family:var(--orb);margin-bottom:10px">⊕</div>
+            <div style="font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--pink);margin-bottom:5px">CREATE</div>
+            <div style="font-size:10px;color:var(--muted2);line-height:1.6">Start a party. You get the room code.</div>
+            <button class="btn btn-primary" id="create-btn" style="width:100%;margin-top:12px;font-size:10px">CREATE →</button>
           </div>
-          <div class="s2-card join" onclick="toggleJoinBox()">
+          <div class="s2-card" onclick="toggleJoin()">
             <div class="bar" style="background:var(--teal)"></div>
-            <div style="font-size:26px;color:var(--teal);font-family:var(--orb);margin-bottom:10px">⊙</div>
-            <div style="font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--teal);margin-bottom:5px">JOIN ROOM</div>
-            <div style="font-size:10px;color:var(--muted2);line-height:1.6">Enter the room code your friend shared with you.</div>
+            <div style="font-size:24px;color:var(--teal);font-family:var(--orb);margin-bottom:10px">⊙</div>
+            <div style="font-family:var(--orb);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--teal);margin-bottom:5px">JOIN</div>
+            <div style="font-size:10px;color:var(--muted2);line-height:1.6">Enter the code your friend sent you.</div>
           </div>
         </div>
         <div id="join-box" style="display:none">
           <div class="join-box">
             <p style="font-family:var(--orb);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:10px">ENTER ROOM CODE</p>
             <input class="join-inp" id="code-inp" placeholder="SYNC-XXXX" maxlength="9" oninput="fmtCode(this)" onkeydown="if(event.key==='Enter')doJoin()"/>
-            <div style="display:flex;gap:8px;margin-top:10px">
-              <button class="btn btn-teal" id="join-btn" style="flex:1;font-size:10px" onclick="doJoin()">JOIN ROOM →</button>
-            </div>
-            <p style="font-size:10px;color:var(--muted);margin-top:8px">You need a valid code from the host to enter.</p>
+            <button class="btn btn-teal" id="join-btn" style="width:100%;margin-top:10px;font-size:10px" onclick="doJoin()">JOIN ROOM →</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- S3: Share code (host only) -->
+    <!-- S3 share code -->
     <div id="s3" class="ob-scr top">
       <div style="width:100%;max-width:480px">
         <p style="font-family:var(--orb);font-size:16px;font-weight:900;letter-spacing:2px;margin-bottom:5px"><span style="color:var(--pink)">SHARE</span> <span style="color:var(--teal)">YOUR CODE</span></p>
-        <p style="font-size:11px;color:var(--muted2);margin-bottom:20px">Send the code or link to friends you want in the party</p>
-
+        <p style="font-size:11px;color:var(--muted2);margin-bottom:16px">Send this to only the friends you want inside</p>
         <div class="rc-box">
           <div>
             <div style="font-family:var(--orb);font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:4px">ROOM CODE</div>
             <div class="rc-code" id="disp-rc">SYNC-0000</div>
           </div>
-          <button class="btn btn-teal" style="font-size:9px;padding:8px 16px" id="copy-btn" onclick="copyRoomCode()">COPY CODE</button>
+          <button class="btn btn-teal" style="font-size:9px;padding:8px 16px" id="copy-btn" onclick="copyCode()">COPY CODE</button>
         </div>
-
-        <div class="share-link-box">
-          <div style="font-family:var(--orb);font-size:8px;color:var(--muted);letter-spacing:1px;flex-shrink:0">LINK</div>
-          <div class="share-link-txt" id="share-link">—</div>
-          <button class="btn btn-teal" id="copy-link-btn" style="font-size:8px;padding:6px 12px;flex-shrink:0" onclick="copyInviteLink()">COPY INVITE LINK</button>
+        <div style="background:var(--bg2);border:1px solid var(--border);padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:center">
+          <div style="font-size:11px;flex-shrink:0">🔒</div>
+          <div style="font-size:10px;color:var(--muted2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="share-link">—</div>
+          <button class="btn btn-ghost" id="copy-link-btn" style="font-size:8px;padding:5px 10px;flex-shrink:0" onclick="copyLink()">COPY</button>
         </div>
-
-        <div style="background:var(--bg2);border:1px solid rgba(251,191,36,.25);padding:12px 14px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:14px;flex-shrink:0">🔒</span>
-          <p style="font-size:11px;color:var(--muted2);line-height:1.6">Only people with this exact code can join your party. Don't share it publicly.</p>
-        </div>
-
         <button class="btn btn-primary" style="width:100%" onclick="openWR()">OPEN WAITING ROOM →</button>
       </div>
     </div>
 
-    <!-- S4: Waiting room -->
+    <!-- S4 waiting room -->
     <div id="s4" class="ob-scr">
       <div style="width:100%;max-width:500px;text-align:center">
         <p style="font-family:var(--orb);font-size:16px;font-weight:900;letter-spacing:2px;margin-bottom:5px"><span style="color:var(--teal)">WAITING</span> <span style="color:var(--pink)">ROOM</span></p>
-        <p style="font-size:11px;color:var(--muted2);margin-bottom:24px" id="wr-sub">Waiting for friends to join…</p>
+        <p style="font-size:11px;color:var(--muted2);margin-bottom:22px" id="wr-sub">Waiting for friends…</p>
         <div class="wait-grid" id="wr-grid" style="margin:0 auto 22px"></div>
         <div id="wr-btns" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"></div>
-        <div style="margin-top:16px">
-          <p style="font-size:10px;color:var(--muted)">Room code: <span style="font-family:var(--orb);color:var(--teal)" id="wr-code-display"></span></p>
-        </div>
+        <p style="font-size:10px;color:var(--muted);margin-top:14px">Code: <span style="font-family:var(--orb);color:var(--teal)" id="wr-code">—</span></p>
       </div>
     </div>
 
   </div>
-</div><!-- /onboarding -->
+</div>
 
-<!-- ══════════ MAIN APP ══════════ -->
+<!-- ═══ MAIN APP ═══ -->
 <div id="app">
 
-  <!-- Desktop header -->
+  <!-- Header -->
   <header class="app-hdr">
     <div class="logo" style="font-size:14px"><span class="t">SYNC</span><span class="p">ZONE</span></div>
-    <div style="width:1px;height:20px;background:var(--border)"></div>
     <div class="hdr-room"><div class="hdr-dot"></div><span style="font-family:var(--orb);font-size:9px;color:var(--teal);letter-spacing:2px" id="hdr-code">—</span></div>
-    <div style="display:flex;gap:2px">
+    <div class="hdr-tab-group" id="hdr-tabs">
       <button class="hdr-tab on" onclick="goTab('lobby',this)">HOME</button>
       <button class="hdr-tab" onclick="goTab('watch',this)">WATCH</button>
       <button class="hdr-tab" onclick="goTab('games',this)">GAMES</button>
     </div>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
       <span style="font-size:10px;color:var(--muted2)" id="hdr-cnt">—</span>
-      <div style="width:1px;height:20px;background:var(--border)"></div>
-      <div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);padding:4px 10px">
-        <div id="hdr-av" style="width:22px;height:22px;border-radius:50%;background:rgba(139,92,246,.2);color:#c4b5fd;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:var(--orb)">?</div>
+      <div style="display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);padding:3px 9px">
+        <div id="hdr-av" style="width:20px;height:20px;border-radius:50%;background:rgba(139,92,246,.2);color:#c4b5fd;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;font-family:var(--orb)">?</div>
         <span style="font-size:10px" id="hdr-un">—</span>
       </div>
     </div>
   </header>
 
-  <!-- Mobile header -->
-  <header class="mob-hdr">
-    <div class="logo" style="font-size:13px"><span class="t">SYNC</span><span class="p">ZONE</span></div>
-    <div class="hdr-room"><div class="hdr-dot"></div><span style="font-family:var(--orb);font-size:9px;color:var(--teal);letter-spacing:1.5px" id="mob-code">—</span></div>
-    <div style="display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);padding:4px 9px">
-      <div id="mob-av" style="width:20px;height:20px;border-radius:50%;background:rgba(139,92,246,.2);color:#c4b5fd;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;font-family:var(--orb)">?</div>
-      <span style="font-size:10px" id="mob-un">—</span>
-    </div>
-  </header>
+  <!-- TOP 1/3: VIDEO CALL — always visible -->
+  <div class="vc-zone" id="vc-zone">
+    <!-- filled by JS -->
+  </div>
 
-  <!-- Mobile video strip -->
-  <div class="vcall-mob" id="vcall-mob">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <span style="font-family:var(--orb);font-size:7px;color:var(--teal);letter-spacing:2px">VIDEO CALL</span>
-      <span style="font-size:9px;color:var(--muted2)" id="mob-vc-cnt">—</span>
+  <!-- CALL CONTROLS -->
+  <div class="call-ctrl">
+    <div class="cc-btn on" id="btn-mic" onclick="toggleMic(this)">
+      <svg width="14" height="14" viewBox="0 0 16 16"><rect x="5" y="1" width="6" height="9" rx="3" fill="#00e5c3"/><path d="M3 8a5 5 0 0010 0" stroke="#00e5c3" fill="none" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="15" stroke="#00e5c3" stroke-width="1.5"/></svg>
     </div>
-    <div class="vc-strip" id="vc-mob-tiles"></div>
-    <div class="vc-mob-ctrl">
-      <div class="vc-btn on" id="mob-mic" onclick="toggleVC(this)" style="width:28px;height:28px">
-        <svg width="12" height="12" viewBox="0 0 16 16"><rect x="5" y="1" width="6" height="9" rx="3" fill="#00e5c3"/><path d="M3 8a5 5 0 0010 0" stroke="#00e5c3" fill="none" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="15" stroke="#00e5c3" stroke-width="1.5"/></svg>
-      </div>
-      <div class="vc-btn on" id="mob-cam" onclick="toggleVC(this)" style="width:28px;height:28px">
-        <svg width="12" height="12" viewBox="0 0 16 16"><rect x="1" y="4" width="9" height="8" rx="1.5" stroke="#00e5c3" stroke-width="1.5" fill="none"/><path d="M10 6.5l4-2v7l-4-2" stroke="#00e5c3" stroke-width="1.5" fill="none"/></svg>
-      </div>
-      <div class="vc-btn end" style="width:28px;height:28px">
-        <svg width="12" height="12" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1-.24 1.1.37 2.3.57 3.6.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.3.2 2.5.57 3.6.1.33.03.73-.24 1L6.6 10.8z" fill="#ff2d78"/></svg>
-      </div>
+    <div class="cc-btn on" id="btn-cam" onclick="toggleCam(this)">
+      <svg width="14" height="14" viewBox="0 0 16 16"><rect x="1" y="4" width="9" height="8" rx="1.5" stroke="#00e5c3" stroke-width="1.5" fill="none"/><path d="M10 6.5l4-2v7l-4-2" stroke="#00e5c3" stroke-width="1.5" fill="none"/></svg>
+    </div>
+    <div class="cc-btn end" onclick="leaveCall()">
+      <svg width="14" height="14" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1-.24 1.1.37 2.3.57 3.6.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.3.2 2.5.57 3.6.1.33.03.73-.24 1L6.6 10.8z" fill="#ff2d78"/></svg>
     </div>
   </div>
 
+  <!-- CONTENT AREA -->
   <div class="app-body">
-    <div class="app-main">
 
-      <!-- LOBBY -->
-      <div class="app-scr on" id="scr-lobby">
-        <div class="lobby-inner">
-          <p style="font-size:10px;color:var(--muted2);letter-spacing:3px;margin-bottom:10px" id="l-greet">WELCOME</p>
-          <h2 class="lobby-headline"><span style="color:var(--teal)">YOUR PARTY</span><br/><span style="color:var(--pink)">IS LIVE</span></h2>
-          <p style="font-size:11px;color:var(--muted2);margin-bottom:28px" id="l-sub">connected · choose what to do</p>
-          <div class="mode-grid">
-            <div class="mode-card watch" onclick="goTabByName('watch')">
-              <div class="mc-bar" style="background:var(--pink)"></div>
-              <div class="mc-icon" style="color:var(--pink)">▶</div>
-              <div class="mc-name" style="color:var(--pink)">WATCH PARTY</div>
-              <div class="mc-desc">Sync YouTube — play, pause, react together in real time</div>
-            </div>
-            <div class="mode-card games" onclick="goTabByName('games')">
-              <div class="mc-bar" style="background:var(--teal)"></div>
-              <div class="mc-icon" style="color:var(--teal)">◈</div>
-              <div class="mc-name" style="color:var(--teal)">GAME ZONE</div>
-              <div class="mc-desc">Chess, Hangman, Tic-Tac-Toe while on call</div>
-            </div>
+    <!-- LOBBY -->
+    <div class="app-scr on" id="scr-lobby">
+      <div class="lobby-inner">
+        <p style="font-size:10px;color:var(--muted2);letter-spacing:3px;font-family:var(--orb);margin-bottom:8px" id="l-greet">WELCOME</p>
+        <h2 class="lobby-headline"><span style="color:var(--teal)">YOUR PARTY</span><br/><span style="color:var(--pink)">IS LIVE</span></h2>
+        <p style="font-size:11px;color:var(--muted2);margin-bottom:22px" id="l-sub">connected</p>
+        <div class="mode-grid">
+          <div class="mode-card" onclick="goTabByName('watch')">
+            <div class="mc-bar" style="background:var(--pink)"></div>
+            <div class="mc-icon" style="color:var(--pink)">▶</div>
+            <div class="mc-name" style="color:var(--pink)">WATCH</div>
+            <div class="mc-desc">Sync YouTube for everyone in real time</div>
           </div>
-          <div class="lobby-pips" id="l-pips"></div>
+          <div class="mode-card" onclick="goTabByName('games')">
+            <div class="mc-bar" style="background:var(--teal)"></div>
+            <div class="mc-icon" style="color:var(--teal)">◈</div>
+            <div class="mc-name" style="color:var(--teal)">GAMES</div>
+            <div class="mc-desc">Play Chess, Hangman or Tic-Tac-Toe</div>
+          </div>
+        </div>
+        <div class="lobby-pips" id="l-pips"></div>
+      </div>
+    </div>
+
+    <!-- WATCH -->
+    <div class="app-scr" id="scr-watch">
+      <button class="back-btn" onclick="goTabByName('lobby')">← back</button>
+      <div class="url-row">
+        <input class="url-inp" id="yt-url" placeholder="Paste YouTube URL…" onkeydown="if(event.key==='Enter')loadVid()"/>
+        <button class="btn btn-primary" style="padding:9px 14px;font-size:10px;flex-shrink:0" onclick="loadVid()">LOAD</button>
+      </div>
+      <div class="player-box" id="player-box">
+        <div style="text-align:center">
+          <div style="font-size:40px;color:var(--border2);margin-bottom:10px">▶</div>
+          <p style="font-family:var(--orb);font-size:9px;color:var(--muted);letter-spacing:3px">NO VIDEO LOADED</p>
         </div>
       </div>
-
-      <!-- WATCH -->
-      <div class="app-scr" id="scr-watch" style="position:relative">
-        <div class="watch-layout">
-          <div class="w-left">
-            <button class="back-btn" onclick="goTabByName('lobby')">← back to lobby</button>
-            <div class="url-row">
-              <input class="url-inp" id="yt-url" placeholder="Paste YouTube URL here…" onkeydown="if(event.key==='Enter')loadVid()"/>
-              <button class="btn btn-primary" style="padding:9px 16px;font-size:10px;flex-shrink:0" onclick="loadVid()">▶ LOAD</button>
-            </div>
-            <div class="player-box" id="player-box">
-              <div style="text-align:center;padding:24px">
-                <div style="font-size:48px;color:var(--border2);margin-bottom:12px">▶</div>
-                <p style="font-family:var(--orb);font-size:10px;color:var(--muted);letter-spacing:3px;margin-bottom:5px">NO VIDEO LOADED</p>
-                <p style="font-size:10px;color:var(--muted)">Paste a YouTube URL above — everyone will see it</p>
-              </div>
-            </div>
-            <div class="chat-mini-bar" id="chat-mini-bar" onclick="expandChat()">
-              <span style="font-family:var(--orb);font-size:8px;color:var(--pink);letter-spacing:1.5px;margin-right:10px;flex-shrink:0">◉ CHAT</span>
-              <span class="chat-mini-preview" id="chat-mini-preview">no messages yet</span>
-              <button style="background:var(--bg2);border:1px solid var(--border);color:var(--muted);padding:3px 8px;font-family:var(--orb);font-size:8px;margin-left:8px;cursor:pointer;flex-shrink:0">EXPAND ↑</button>
-            </div>
-            <div class="w-stats">
-              <div class="wst"><div class="wst-l">STATUS</div><div class="wst-v" id="w-status" style="color:var(--muted2)">○ WAITING</div></div>
-              <div class="wst"><div class="wst-l">SYNCED</div><div class="wst-v" id="w-syn" style="color:var(--blue)">—</div></div>
-              <div class="wst"><div class="wst-l">ROOM</div><div class="wst-v" id="w-room" style="color:var(--teal)">—</div></div>
-              <div class="wst"><div class="wst-l">DELAY</div><div class="wst-v" style="color:var(--amber)">&lt; 1s</div></div>
-            </div>
-          </div>
-          <!-- Desktop chat -->
-          <div class="chat-panel" id="chat-panel">
-            <div class="chat-hdr">
-              <div style="display:flex;align-items:center;gap:7px">
-                <span class="chat-hdr-title">◉ CHAT</span>
-                <span style="font-size:8px;color:var(--muted);animation:ticker 1.4s infinite">● LIVE</span>
-              </div>
-              <button class="chat-toggle" onclick="collapseChat()">⊟ HIDE</button>
-            </div>
-            <div class="chat-msgs" id="wc-msgs"></div>
-            <div class="chat-inp-row">
-              <input class="chat-inp" id="wc-inp" placeholder="say something…" onkeydown="if(event.key==='Enter')sendChat()"/>
-              <button class="chat-send" onclick="sendChat()">→</button>
-            </div>
-          </div>
-        </div>
-        <!-- Mobile chat drawer -->
-        <div class="chat-drawer" id="chat-drawer">
-          <div class="drawer-drag"></div>
-          <div class="chat-hdr">
-            <span class="chat-hdr-title">◉ PARTY CHAT</span>
-            <button class="chat-toggle" onclick="closeMobChat()">✕ CLOSE</button>
-          </div>
-          <div id="wc-msgs-mob" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px"></div>
-          <div class="chat-inp-row">
-            <input class="chat-inp" id="wc-inp-mob" placeholder="say something…" onkeydown="if(event.key==='Enter')sendChatMob()"/>
-            <button class="chat-send" onclick="sendChatMob()">→</button>
-          </div>
-        </div>
+      <div class="w-stats">
+        <div class="wst"><div class="wst-l">STATUS</div><div class="wst-v" id="w-status" style="color:var(--muted2)">○ WAITING</div></div>
+        <div class="wst"><div class="wst-l">SYNCED</div><div class="wst-v" id="w-syn" style="color:var(--blue)">—</div></div>
+        <div class="wst"><div class="wst-l">DELAY</div><div class="wst-v" style="color:var(--amber)">&lt;1s</div></div>
       </div>
-
-      <!-- GAMES -->
-      <div class="app-scr" id="scr-games">
-        <div id="gz-lobby" style="padding:22px 20px">
-          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:5px">
-            <span style="font-family:var(--orb);font-size:18px;font-weight:900;color:var(--pink)">GAME</span>
-            <span style="font-family:var(--orb);font-size:18px;font-weight:900;color:var(--teal)">ZONE</span>
-          </div>
-          <p style="font-size:10px;color:var(--muted2);letter-spacing:1px;margin-bottom:22px">Pick a game — everyone on the call can watch and play</p>
-          <div class="gz-grid">
-            <div class="gc" onclick="openGame('ttt')" onmouseenter="this.style.borderColor='rgba(0,229,195,.4)'" onmouseleave="this.style.borderColor='var(--border)'">
-              <div class="gc-bar" style="background:var(--teal)"></div>
-              <div class="gc-icon" style="color:var(--teal)">✕ ○</div>
-              <div class="gc-name" style="color:var(--teal)">TIC-TAC-TOE</div>
-              <div class="gc-desc">3 in a row wins. Live scoreboard.</div>
-              <div class="gc-badge" style="color:var(--teal);border-color:rgba(0,229,195,.3)">2P</div>
-            </div>
-            <div class="gc" onclick="openGame('hm')" onmouseenter="this.style.borderColor='rgba(255,45,120,.4)'" onmouseleave="this.style.borderColor='var(--border)'">
-              <div class="gc-bar" style="background:var(--pink)"></div>
-              <div class="gc-icon" style="color:var(--pink)">◯</div>
-              <div class="gc-name" style="color:var(--pink)">HANGMAN</div>
-              <div class="gc-desc">Guess the word before drawn.</div>
-              <div class="gc-badge" style="color:var(--pink);border-color:rgba(255,45,120,.3)">1P</div>
-            </div>
-            <div class="gc" onclick="openGame('chess')" onmouseenter="this.style.borderColor='rgba(251,191,36,.4)'" onmouseleave="this.style.borderColor='var(--border)'">
-              <div class="gc-bar" style="background:var(--amber)"></div>
-              <div class="gc-icon" style="color:var(--amber)">♞</div>
-              <div class="gc-name" style="color:var(--amber)">CHESS</div>
-              <div class="gc-desc">Full legal moves. Strategy battle.</div>
-              <div class="gc-badge" style="color:var(--amber);border-color:rgba(251,191,36,.3)">2P</div>
-            </div>
-          </div>
+      <div class="chat-box">
+        <div class="chat-hdr">
+          <span class="chat-hdr-title">◉ CHAT</span>
+          <span style="font-size:8px;color:var(--muted);animation:blink 1.4s infinite">● LIVE</span>
         </div>
-        <!-- TTT -->
-        <div class="gp" id="gp-ttt">
-          <button class="back-btn" style="margin-bottom:14px" onclick="closeGame()">← back to games</button>
-          <div style="text-align:center">
-            <h2 style="font-family:var(--orb);font-size:18px;font-weight:900;letter-spacing:4px;color:var(--teal);margin-bottom:3px">TIC-TAC-TOE</h2>
-            <p style="font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:18px">2-PLAYER LOCAL</p>
-            <div class="ttt-scores">
-              <div class="ttt-sb"><div class="ttt-sl">PLAYER X</div><div class="ttt-sv" id="tsx" style="color:var(--pink)">0</div></div>
-              <div class="ttt-sb"><div class="ttt-sl">DRAWS</div><div class="ttt-sv" id="tsd" style="color:var(--muted)">0</div></div>
-              <div class="ttt-sb"><div class="ttt-sl">PLAYER O</div><div class="ttt-sv" id="tso" style="color:var(--teal)">0</div></div>
-            </div>
-            <div class="ttt-status" id="ttt-st"></div>
-            <div class="ttt-board" id="ttt-bd"></div>
-            <div id="ttt-ag"></div>
-          </div>
-        </div>
-        <!-- Hangman -->
-        <div class="gp" id="gp-hm">
-          <button class="back-btn" style="margin-bottom:14px" onclick="closeGame()">← back to games</button>
-          <h2 style="font-family:var(--orb);font-size:18px;font-weight:900;letter-spacing:4px;color:var(--pink);margin-bottom:20px">HANGMAN</h2>
-          <div class="hm-body">
-            <svg id="hm-svg" width="190" height="170" style="background:var(--bg2);border:1px solid var(--border);flex-shrink:0"></svg>
-            <div class="hm-right">
-              <div class="word-row" id="hm-wd"></div>
-              <div style="font-family:var(--orb);font-size:10px;letter-spacing:2px;margin-bottom:7px" id="hm-st"></div>
-              <div class="hm-pt"><div class="hm-pf" id="hm-pf"></div></div>
-              <div style="font-size:9px;color:var(--muted)" id="hm-pl"></div>
-            </div>
-          </div>
-          <div class="kb" id="hm-kb"></div>
-          <div id="hm-ag"></div>
-        </div>
-        <!-- Chess -->
-        <div class="gp" id="gp-chess">
-          <button class="back-btn" style="margin-bottom:14px" onclick="closeGame()">← back to games</button>
-          <h2 style="font-family:var(--orb);font-size:18px;font-weight:900;letter-spacing:4px;color:var(--amber);margin-bottom:20px">CHESS</h2>
-          <div class="ch-layout">
-            <div class="ch-scroll"><div class="ch-wrap">
-              <div class="ch-rl" id="ch-rl"></div>
-              <div class="ch-board" id="ch-bd"></div>
-              <div class="ch-fl" id="ch-fl"></div>
-            </div></div>
-            <div class="ch-side">
-              <div class="ch-box"><div class="ch-lbl">CURRENT TURN</div>
-                <div style="display:flex;align-items:center;gap:9px">
-                  <div style="width:22px;height:22px;border-radius:50%;border:2px solid var(--amber);transition:background .3s" id="ch-dot"></div>
-                  <span style="font-family:var(--orb);font-size:12px;color:var(--amber);font-weight:700;letter-spacing:1px" id="ch-tn">WHITE</span>
-                </div>
-              </div>
-              <div class="ch-box"><div class="ch-lbl">MOVES PLAYED</div><div style="font-family:var(--orb);font-size:22px;font-weight:900;color:var(--blue)" id="ch-mv">0</div></div>
-              <div class="ch-box"><div class="ch-lbl">WHITE CAPTURED</div><div id="ch-wc" style="font-size:18px;min-height:22px;letter-spacing:2px"></div></div>
-              <div class="ch-box"><div class="ch-lbl">BLACK CAPTURED</div><div id="ch-bc" style="font-size:18px;min-height:22px;letter-spacing:2px"></div></div>
-              <button class="btn btn-amber" style="width:100%;margin-bottom:10px;font-size:9px" onclick="initChess()">↺ RESET</button>
-            </div>
-          </div>
-        </div>
-      </div><!-- /scr-games -->
-
-    </div><!-- /app-main -->
-
-    <!-- Desktop video call panel -->
-    <div class="vcall-desk">
-      <div class="vc-hdr">
-        <span class="vc-title">VIDEO CALL</span>
-        <span style="font-size:9px;color:var(--muted2)" id="vc-cnt">—</span>
-      </div>
-      <div class="vc-tiles" id="vc-tiles"></div>
-      <div class="vc-ctrl">
-        <div class="vc-btn on" id="btn-mic" onclick="toggleVC(this)">
-          <svg class="vi" viewBox="0 0 16 16"><rect x="5" y="1" width="6" height="9" rx="3" fill="#00e5c3"/><path d="M3 8a5 5 0 0010 0" stroke="#00e5c3" fill="none" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="15" stroke="#00e5c3" stroke-width="1.5"/></svg>
-        </div>
-        <div class="vc-btn on" id="btn-cam" onclick="toggleVC(this)">
-          <svg class="vi" viewBox="0 0 16 16"><rect x="1" y="4" width="9" height="8" rx="1.5" stroke="#00e5c3" stroke-width="1.5" fill="none"/><path d="M10 6.5l4-2v7l-4-2" stroke="#00e5c3" stroke-width="1.5" fill="none"/></svg>
-        </div>
-        <div class="vc-btn">
-          <svg class="vi" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="10" rx="1.5" stroke="#6a6a92" stroke-width="1.5" fill="none"/><line x1="5" y1="14" x2="11" y2="14" stroke="#6a6a92" stroke-width="1.5"/><line x1="8" y1="12" x2="8" y2="14" stroke="#6a6a92" stroke-width="1.5"/></svg>
-        </div>
-        <div class="vc-btn end">
-          <svg class="vi" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1-.24 1.1.37 2.3.57 3.6.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.3.2 2.5.57 3.6.1.33.03.73-.24 1L6.6 10.8z" fill="#ff2d78"/></svg>
+        <div class="chat-msgs" id="chat-msgs"></div>
+        <div class="chat-inp-row">
+          <input class="chat-inp" id="chat-inp" placeholder="say something…" onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="chat-send" onclick="sendChat()">→</button>
         </div>
       </div>
     </div>
+
+    <!-- GAMES LOBBY -->
+    <div class="app-scr" id="scr-games">
+      <div id="gz-lobby" style="padding:14px">
+        <button class="back-btn" style="padding:0 0 10px" onclick="goTabByName('lobby')">← back</button>
+        <div class="gz-title"><span style="color:var(--pink)">GAME</span> <span style="color:var(--teal)">ZONE</span></div>
+        <p class="gz-sub">Pick a game — both players play on their own devices</p>
+        <div class="gz-grid">
+          <div class="gc" onclick="openGame('ttt')">
+            <div class="gc-bar" style="background:var(--teal)"></div>
+            <div class="gc-icon" style="color:var(--teal)">✕○</div>
+            <div class="gc-info">
+              <div class="gc-name" style="color:var(--teal)">TIC-TAC-TOE</div>
+              <div class="gc-desc">Take turns — 3 in a row wins. Host is X, guest is O.</div>
+            </div>
+            <div class="gc-badge" style="color:var(--teal);border-color:rgba(0,229,195,.3)">2P</div>
+          </div>
+          <div class="gc" onclick="openGame('hm')">
+            <div class="gc-bar" style="background:var(--pink)"></div>
+            <div class="gc-icon" style="color:var(--pink)">◯</div>
+            <div class="gc-info">
+              <div class="gc-name" style="color:var(--pink)">HANGMAN</div>
+              <div class="gc-desc">Take turns guessing letters. Host picks word, guest guesses first.</div>
+            </div>
+            <div class="gc-badge" style="color:var(--pink);border-color:rgba(255,45,120,.3)">2P</div>
+          </div>
+          <div class="gc" onclick="openGame('chess')">
+            <div class="gc-bar" style="background:var(--amber)"></div>
+            <div class="gc-icon" style="color:var(--amber)">♞</div>
+            <div class="gc-info">
+              <div class="gc-name" style="color:var(--amber)">CHESS</div>
+              <div class="gc-desc">Host plays White, guest plays Black. Full legal moves.</div>
+            </div>
+            <div class="gc-badge" style="color:var(--amber);border-color:rgba(251,191,36,.3)">2P</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TTT PANEL -->
+      <div class="gp" id="gp-ttt">
+        <div class="turn-banner" id="ttt-banner">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="turn-av" id="ttt-banner-av"></div>
+            <div>
+              <div class="turn-label">CURRENT TURN</div>
+              <div class="turn-name" id="ttt-banner-txt"></div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="turn-label">SCORE</div>
+            <div style="font-size:13px;font-weight:700" id="ttt-score-display"></div>
+          </div>
+        </div>
+        <div class="score-row">
+          <div class="score-box"><div class="score-lbl">X — <span id="ttt-x-name">—</span></div><div class="score-val" id="tsx" style="color:var(--pink)">0</div></div>
+          <div class="score-box"><div class="score-lbl">DRAWS</div><div class="score-val" id="tsd" style="color:var(--muted)">0</div></div>
+          <div class="score-box"><div class="score-lbl">O — <span id="ttt-o-name">—</span></div><div class="score-val" id="tso" style="color:var(--teal)">0</div></div>
+        </div>
+        <div class="ttt-board" id="ttt-bd"></div>
+        <div class="player-labels">
+          <div class="pl-box" style="border-color:rgba(255,45,120,.3)"><div class="pl-lbl">X IS</div><div class="pl-name" id="ttt-plx" style="color:var(--pink)">—</div></div>
+          <div class="pl-box" style="border-color:rgba(0,229,195,.3)"><div class="pl-lbl">O IS</div><div class="pl-name" id="ttt-plo" style="color:var(--teal)">—</div></div>
+        </div>
+        <div style="text-align:center;padding:0 14px 14px;display:flex;gap:8px;justify-content:center" id="ttt-btns"></div>
+      </div>
+
+      <!-- HANGMAN PANEL -->
+      <div class="gp" id="gp-hm">
+        <div class="turn-banner" id="hm-banner">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="turn-av" id="hm-banner-av"></div>
+            <div>
+              <div class="turn-label">CURRENT TURN</div>
+              <div class="turn-name" id="hm-banner-txt"></div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="turn-label">ATTEMPTS</div>
+            <div style="font-size:13px;font-weight:700" id="hm-attempts-display"></div>
+          </div>
+        </div>
+        <div class="hm-content">
+          <svg id="hm-svg" width="180" height="160" style="background:var(--bg2);border:1px solid var(--border);flex-shrink:0;align-self:center"></svg>
+          <div class="word-row" id="hm-wd"></div>
+          <div style="font-family:var(--orb);font-size:10px;letter-spacing:2px" id="hm-st"></div>
+          <div class="hm-prog"><div class="hm-prog-fill" id="hm-pf"></div></div>
+          <div class="kb" id="hm-kb"></div>
+          <div id="hm-btns" style="text-align:center"></div>
+        </div>
+      </div>
+
+      <!-- CHESS PANEL -->
+      <div class="gp" id="gp-chess">
+        <div class="turn-banner" id="ch-banner">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div id="ch-turn-dot" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--amber)"></div>
+            <div>
+              <div class="turn-label">CURRENT TURN</div>
+              <div class="turn-name" id="ch-banner-txt"></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-family:var(--orb);font-size:9px;color:var(--muted)" id="ch-move-cnt">MOVE 0</span>
+            <button class="btn btn-ghost" style="font-size:8px;padding:5px 10px" onclick="initChess()">RESET</button>
+          </div>
+        </div>
+        <div class="chess-content">
+          <div class="chess-board-wrap">
+            <div class="chess-board" id="ch-bd" style="--sq:38px"></div>
+          </div>
+          <div class="chess-info">
+            <div class="ci-box">
+              <div class="ci-lbl">WHITE</div>
+              <div class="ci-val" id="ch-white-name" style="font-family:var(--orb);font-size:10px;color:var(--amber)">—</div>
+              <div style="font-size:10px;margin-top:3px" id="ch-wcap"></div>
+            </div>
+            <div class="ci-box">
+              <div class="ci-lbl">BLACK</div>
+              <div class="ci-val" id="ch-black-name" style="font-family:var(--orb);font-size:10px;color:var(--amber)">—</div>
+              <div style="font-size:10px;margin-top:3px" id="ch-bcap"></div>
+            </div>
+            <div class="ci-box" style="flex:0;padding:8px 12px;display:flex;align-items:center">
+              <span style="font-size:9px;color:var(--muted)" id="ch-status">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /scr-games -->
   </div><!-- /app-body -->
 
-  <!-- Mobile bottom nav -->
+  <!-- BOTTOM NAV -->
   <nav class="bot-nav">
-    <div class="bot-nav-inner">
-      <div class="bn-tab on" id="bn-lobby" onclick="goTabMob('lobby',this)">HOME</div>
-      <div class="bn-tab" id="bn-watch" onclick="goTabMob('watch',this)">WATCH</div>
-      <div class="bn-tab" id="bn-games" onclick="goTabMob('games',this)">GAMES</div>
-    </div>
+    <div class="bn on" id="bn-lobby" onclick="goTabMob('lobby',this)">HOME</div>
+    <div class="bn" id="bn-watch" onclick="goTabMob('watch',this)">WATCH</div>
+    <div class="bn" id="bn-games" onclick="goTabMob('games',this)">GAMES</div>
   </nav>
-
-  <!-- Mobile chat FAB -->
-  <button id="chat-fab" onclick="openMobChat()" style="display:none;position:fixed;bottom:calc(56px + var(--safe-b) + 14px);right:16px;z-index:60;width:46px;height:46px;border-radius:50%;background:var(--pink);border:none;color:#fff;font-size:18px;box-shadow:0 4px 16px rgba(255,45,120,.4);touch-action:manipulation">💬</button>
 </div><!-- /app -->
 
-<!-- Scripts -->
 <script src="config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
